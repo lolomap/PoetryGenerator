@@ -19,7 +19,7 @@ def PrologInit(prolog):
 		pass
 	for _ in prolog.query('[util].'):
 		pass
-	for _ in prolog.query('[words].'):
+	for _ in prolog.query('load_files([words],[encoding(utf8)]).'):
 		pass
 
 
@@ -57,7 +57,10 @@ class WebServer(BaseHTTPRequestHandler):
 		self.send_response(200)
 		self.send_header('Content-type', 'application/json')
 		self.end_headers()
-		self.wfile.write(bytes('{"text": "'+GenSimple(prologobj, 1)+'"}', 'utf-8'))
+
+		resText = GenSimple(prologobj, 1).encode('cp1251').decode()
+
+		self.wfile.write(bytes('{"text": "' + resText + '"}', 'utf-8'))
 
 	def do_POST(self):
 		self.send_response(200)
@@ -71,7 +74,7 @@ class WebServer(BaseHTTPRequestHandler):
 		if post_data['pos'] != -1:
 			n = post_data['pos']
 
-		resText = GenText(prologobj, post_data['data'], n, post_data['speech_part'])
+		resText = GenText(prologobj, post_data['data'], n, post_data['speech_part']).encode('cp1251').decode()
 
 		self.wfile.write(bytes(
 			'{"text": "' + resText +
